@@ -1,5 +1,5 @@
 import {defineStore} from 'pinia';
-import Student from '@/domains/Student';
+import Student from '@domains/Student';
 
 interface State {
   students: Student[];
@@ -7,11 +7,7 @@ interface State {
 
 export const useArchiveStore = defineStore('archives', {
   state: (): State => ({
-    students: [
-      {id: 10000},
-      {id: 10001},
-      {id: 10002},
-    ],
+    students: [],
   }),
   getters: {
     getStudentById(state) {

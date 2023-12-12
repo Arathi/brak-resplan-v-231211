@@ -23,7 +23,10 @@
     /* Alias */
     "paths": {
       "@/*": ["./src/*"],
+      "@components/*": ["./src/components/*"],
+      "@domains/*": ["./src/domains/*"],
       "@stores/*": ["./src/stores/*"],
+      "@views/*": ["./src/views/*"]
     }
   },
   "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.vue"],
