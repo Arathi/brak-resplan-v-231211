@@ -1,37 +1,36 @@
 export type School = string;
 
 export enum CombatClass {
-  Striker = "striker",
-  Special = "special",
+  Striker = "Striker",
+  Special = "Special",
 }
 
 export enum Role {
-  Tank = "tank",
-  Attacker = "attacker",
-  Healer = "healer",
-  Support = "support",
-  TacticalSupport = "tactical_support",
+  Tank = "Tank",
+  Dealer = "Dealer",
+  Healer = "Healer",
+  Support = "Support",
+  TacticalSupport = "TacticalSupport",
 }
 
-// export enum Position {
-//   Front = "Front",
-//   Middle = "Middle",
-//   Back = "Back",
-// }
-export type Position = "Front" | "Middle" | "Back" | string;
+export enum Position {
+  Front = "Front",
+  Middle = "Middle",
+  Back = "Back",
+}
 
 export enum AttackType {
-  Explosive = "explosive",
-  Penetration = "penetration",
-  Mystic = "mystic",
-  Sonic = "sonic",
+  Explosive = "Explosive",
+  Piercing = "Piercing",
+  Mystic = "Mystic",
+  Sonic = "Sonic",
 }
 
 export enum ArmorType {
-  Light = "light",
-  Heavy = "heavy",
-  Special = "special",
-  Elastic = "elastic"
+  Light = "Light",
+  Heavy = "Heavy",
+  Special = "Special",
+  Elastic = "Elastic"
 }
 
 export type WeaponType = string;

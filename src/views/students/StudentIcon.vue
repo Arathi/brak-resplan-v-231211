@@ -2,7 +2,6 @@
 import {computed} from 'vue';
 import {useArchiveStore} from '@stores/Archive';
 import {useMetadataStore} from '@stores/Metadata';
-import {useSettingsStore} from '@stores/Settings';
 import Student from '@/domains/Student';
 import Metadata from '@/domains/metadata/Student';
 import StudentAvatar from '@/views/students/StudentAvatar.vue';

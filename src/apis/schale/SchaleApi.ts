@@ -1,16 +1,7 @@
 import Axios, {AxiosInstance} from 'axios';
 import {useSettingsStore} from '@stores/Settings';
 import Student from './schemas/Student';
-import StudentMetadata, {
-  CombatClass,
-  Role,
-  Position,
-  AttackType,
-  ArmorType,
-  WeaponType,
-  EquipmentType,
-} from '@/domains/metadata/Student';
-import {Exception} from 'sass';
+import StudentMetadata, {ArmorType, AttackType, CombatClass, Position, Role} from '@/domains/metadata/Student';
 import {useMetadataStore} from '@stores/Metadata.ts';
 
 enum Server {
@@ -61,6 +52,7 @@ export default class SchaleApi {
       try {
         const combatClass = this.toCombatClass(student.SquadType);
         const role = this.toRole(student.TacticRole);
+        const position = this.toPosition(student.Position);
         const attackType = this.toAttackType(student.BulletType);
         const armorType = this.toArmorType(student.ArmorType);
 
@@ -71,7 +63,7 @@ export default class SchaleApi {
           school: student.School,
           combatClass,
           role,
-          position: student.Position as Position,
+          position,
           attackType,
           armorType,
           weaponType: student.WeaponType,
@@ -93,28 +85,37 @@ export default class SchaleApi {
       case "Main": return CombatClass.Striker;
       case "Support": return CombatClass.Special;
     }
-    throw new Exception(`${value}无法转换为CombatClass`);
+    throw new Error(`${value}无法转换为CombatClass`);
   }
 
   toRole(value: string): Role {
     switch (value) {
       case "Tanker": return Role.Tank;
-      case "DamageDealer": return Role.Attacker;
+      case "DamageDealer": return Role.Dealer;
       case "Healer": return Role.Healer;
       case "Supporter": return Role.Support;
       case "Vehicle": return Role.TacticalSupport;
     }
-    throw new Exception(`${value}无法转换为Role`);
+    throw new Error(`${value}无法转换为Role`);
+  }
+
+  toPosition(value: string): Position {
+    switch (value) {
+      case "Front": return Position.Front;
+      case "Middle": return Position.Middle;
+      case "Back": return Position.Back;
+    }
+    throw new Error(`${value}无法转换为Position`);
   }
 
   toAttackType(value: string): AttackType {
     switch (value) {
       case "Explosion": return AttackType.Explosive;
-      case "Pierce": return AttackType.Penetration;
+      case "Pierce": return AttackType.Piercing;
       case "Mystic": return AttackType.Mystic;
       case "Sonic": return AttackType.Sonic;
     }
-    throw new Exception(`${value}无法转换为AttackType`);
+    throw new Error(`${value}无法转换为AttackType`);
   }
 
   toArmorType(value: string): ArmorType {
@@ -124,6 +125,6 @@ export default class SchaleApi {
       case "Unarmed": return ArmorType.Special;
       case "ElasticArmor": return ArmorType.Elastic;
     }
-    throw new Exception(`${value}无法转换为ArmorType`);
+    throw new Error(`${value}无法转换为ArmorType`);
   }
 }
