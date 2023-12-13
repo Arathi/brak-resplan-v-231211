@@ -22,6 +22,9 @@ const props = withDefaults(defineProps<Props>(), {
   borderColor: '#D6DCDC',
 });
 
+const viewBox = computed(() => `0 0 ${props.size} ${props.size}`);
+const sizePx = computed(() => `${props.size}px`);
+
 const tlUp = computed<Point>(() => ({x: props.gap, y: 1}));
 const arcTRStart = computed<Point>(() => ({x: props.size-props.radius, y:1}));
 const arcTREnd = computed<Point>(() => ({x: props.size-1, y: props.radius}));
@@ -45,12 +48,9 @@ const definition = computed(() => `
 </script>
 
 <template>
-  <svg viewBox="0 0 132 132" width="132px" height="132px">
+  <svg :viewBox="viewBox" :width="sizePx" :height="sizePx">
     <g :fill="backgroundColor" :stroke="borderColor">
       <path :d="definition" />
     </g>
   </svg>
 </template>
-
-<style scoped lang="scss">
-</style>

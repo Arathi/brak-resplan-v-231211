@@ -25,14 +25,14 @@ const links = [
 
 <template>
   <div class="navigator">
-    <template v-for="link in links">
-      <router-link
-        :class="`link ${link.name==route.name?'current':''}`"
-        :to="link.to"
-      >
-        {{ link.title }}
-      </router-link>
-    </template>
+    <router-link
+      v-for="link in links"
+      class="link"
+      :class="{current: link.name == route.name}"
+      :to="link.to"
+    >
+      {{ link.title }}
+    </router-link>
   </div>
 </template>
 

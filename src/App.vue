@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import {computed, onBeforeMount, onMounted, provide, watch} from 'vue';
+import {computed, onBeforeMount, provide, watch} from 'vue';
 import {RouterView} from 'vue-router';
-import {useSettingsStore} from '@stores/Settings';
 import {useWindowSize} from '@vueuse/core';
-import Navigator from '@/components/Navigator.vue';
-import SchaleApi from '@/apis/schale/SchaleApi.ts';
+import {useSettingsStore} from '@stores/Settings';
+import SchaleApi from '@/apis/schale/SchaleApi';
+import Navigator from '@components/Navigator.vue';
 
 const bgImageSize = {width: 1024, height: 768};
 const bgImageRadio = bgImageSize.width / bgImageSize.height;

@@ -23,7 +23,13 @@ const name = computed<string>(() => props.metadata.name ?? "");
 
 <template>
   <div class="student-avatar">
-    <div :class="`icon ${owned?'owned':'not-owned'}`">
+    <div
+      class="icon"
+      :class="{
+        owned: owned,
+        'not-owned': !owned,
+      }"
+    >
       <img
         :src="iconURL"
         :width="120"

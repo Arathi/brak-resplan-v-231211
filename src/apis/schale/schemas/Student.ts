@@ -90,7 +90,7 @@ export interface Skill {
   Cost?: number[]
   Duration?: number
   Range?: number
-  Radius?: Radiu[]
+  Radius?: Radius[]
   Icon?: string
   EffectCombine?: string[]
   EffectCombineLabel?: EffectCombineLabel
@@ -154,7 +154,7 @@ export interface ExtraDamageSource {
   SimulatePerHit: boolean
 }
 
-export interface Radiu {
+export interface Radius {
   Type: string
   Radius?: number
   Width?: number

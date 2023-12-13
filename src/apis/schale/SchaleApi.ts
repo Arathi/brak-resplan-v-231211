@@ -1,14 +1,18 @@
 import Axios, {AxiosInstance} from 'axios';
 import {useSettingsStore} from '@stores/Settings';
 import Student from './schemas/Student';
-import StudentMetadata, {ArmorType, AttackType, CombatClass, Position, Role} from '@/domains/metadata/Student';
-import {useMetadataStore} from '@stores/Metadata.ts';
+import StudentMetadata, {ArmorType, AttackType, CombatClass, Position, Role} from '@domains/metadata/Student';
+import {useMetadataStore} from '@stores/Metadata';
 
 enum Server {
   Japan = "jp",
   Global = "global",
   China = "cn",
 }
+
+const ServerIndexJapan = 0;
+const ServerIndexGlobal = 1;
+const ServerIndexChina = 2;
 
 enum Language {
   Japanese = "jp",
@@ -22,7 +26,6 @@ export default class SchaleApi {
   axios: AxiosInstance;
 
   constructor() {
-    // const settings = useSettingsStore();
     this.axios = Axios.create({});
   }
 
@@ -48,8 +51,28 @@ export default class SchaleApi {
     const students: Student[] = resp.data;
     console.debug(`获取学生数据${students.length}条：`, students);
 
+    let serverIndex = ServerIndexJapan;
+    switch (server) {
+      case Server.Japan:
+        serverIndex = ServerIndexJapan;
+        break;
+      case Server.Global:
+        serverIndex = ServerIndexGlobal;
+        break;
+      case Server.China:
+        serverIndex = ServerIndexChina;
+        break;
+    }
+
     for (const student of students) {
+      const id = student.Id;
       try {
+        const released: boolean = student.IsReleased[serverIndex];
+        if (!released) {
+          console.warn(`学生${id}尚未实装`);
+          continue;
+        }
+
         const combatClass = this.toCombatClass(student.SquadType);
         const role = this.toRole(student.TacticRole);
         const position = this.toPosition(student.Position);
@@ -57,7 +80,7 @@ export default class SchaleApi {
         const armorType = this.toArmorType(student.ArmorType);
 
         const metadata = {
-          id: student.Id,
+          id,
           name: student.Name,
           rarity: student.StarGrade,
           school: student.School,
@@ -73,7 +96,7 @@ export default class SchaleApi {
         results.push(metadata);
       }
       catch (ex) {
-        console.warn("数据转换出错：", ex);
+        console.warn(`学生数据${id}转换出错：`, ex);
       }
     }
 
