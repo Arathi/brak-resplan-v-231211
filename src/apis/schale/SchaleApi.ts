@@ -1,25 +1,15 @@
 import Axios, {AxiosInstance} from 'axios';
-import {useSettingsStore} from '@stores/Settings';
-import Student from './schemas/Student';
+import StudentSchema from './schemas/Student';
+import ItemSchema from './schemas/Item';
 import StudentMetadata, {ArmorType, AttackType, CombatClass, Position, Role} from '@domains/metadata/Student';
+import ItemMetadata from '@domains/metadata/Item';
+import {useSettingsStore, Server, Language} from '@stores/Settings';
 import {useMetadataStore} from '@stores/Metadata';
 
-enum Server {
-  Japan = "jp",
-  Global = "global",
-  China = "cn",
-}
-
-const ServerIndexJapan = 0;
-const ServerIndexGlobal = 1;
-const ServerIndexChina = 2;
-
-enum Language {
-  Japanese = "jp",
-  English = "en",
-  ChineseTraditional = "tw",
-  ChineseSimplifiedUnofficial = "zh",
-  ChineseSimplified = "cn",
+export const ServerIndexes = {
+  jp: 0,
+  global: 1,
+  cn: 2,
 }
 
 export default class SchaleApi {
@@ -29,68 +19,61 @@ export default class SchaleApi {
     this.axios = Axios.create({});
   }
 
-  async reloadDatas(server: Server = Server.Japan, lang: Language = Language.ChineseSimplified) {
+  async reloadDatas() {
     const settings = useSettingsStore();
     const metadataStore = useMetadataStore();
-    this.reloadStudents(settings.cdn, server, lang, false).then((students) => {
-      metadataStore.students = students;
-      console.info("学生信息更新完成：", students);
+    this.reloadStudents(settings.cdn, settings.server, settings.language, settings.useMin).then((students) => {
+      metadataStore.$patch({students});
+      console.info("学生信息加载完成：", students);
+    });
+    this.reloadItems(settings.cdn, settings.server, settings.language, settings.useMin).then((items) => {
+      metadataStore.$patch({items});
+      console.info("道具信息加载完成：", items);
     });
   }
 
+  // region Students
   async reloadStudents(cdn: string, server: Server, lang: Language, useMin: boolean = false): Promise<StudentMetadata[]> {
     const results: StudentMetadata[] = [];
     const dotMin = useMin ? ".min" : "";
     const url = `${cdn}/data/${lang}/students${dotMin}.json`;
-    const resp = await this.axios.get<Student[]>(url);
+    const resp = await this.axios.get<StudentSchema[]>(url);
     if (resp.status !== 200) {
       console.error(`获取学生数据（${url}）发生错误，状态码：${resp.status} (${resp.statusText})`);
       return results;
     }
 
-    const students: Student[] = resp.data;
+    const students: StudentSchema[] = resp.data;
     console.debug(`获取学生数据${students.length}条：`, students);
 
-    let serverIndex = ServerIndexJapan;
-    switch (server) {
-      case Server.Japan:
-        serverIndex = ServerIndexJapan;
-        break;
-      case Server.Global:
-        serverIndex = ServerIndexGlobal;
-        break;
-      case Server.China:
-        serverIndex = ServerIndexChina;
-        break;
-    }
-
-    for (const student of students) {
-      const id = student.Id;
+    const serverIndex = ServerIndexes[server];
+    for (const schema of students) {
+      const id = schema.Id;
       try {
-        const released: boolean = student.IsReleased[serverIndex];
+        const released: boolean = schema.IsReleased[serverIndex];
         if (!released) {
           console.warn(`学生${id}尚未实装`);
           continue;
         }
 
-        const combatClass = this.toCombatClass(student.SquadType);
-        const role = this.toRole(student.TacticRole);
-        const position = this.toPosition(student.Position);
-        const attackType = this.toAttackType(student.BulletType);
-        const armorType = this.toArmorType(student.ArmorType);
+        const combatClass = this.toCombatClass(schema.SquadType);
+        const role = this.toRole(schema.TacticRole);
+        const position = this.toPosition(schema.Position);
+        const attackType = this.toAttackType(schema.BulletType);
+        const armorType = this.toArmorType(schema.ArmorType);
 
         const metadata = {
           id,
-          name: student.Name,
-          rarity: student.StarGrade,
-          school: student.School,
+          name: schema.Name,
+          rarity: schema.StarGrade,
+          school: schema.School,
           combatClass,
           role,
           position,
           attackType,
           armorType,
-          weaponType: student.WeaponType,
-          equipmentTypes: student.Equipment,
+          weaponType: schema.WeaponType,
+          equipmentTypes: schema.Equipment,
         } as StudentMetadata;
 
         results.push(metadata);
@@ -150,4 +133,42 @@ export default class SchaleApi {
     }
     throw new Error(`${value}无法转换为ArmorType`);
   }
+  // endregion
+
+  // region Items
+  async reloadItems(cdn: string, server: Server, lang: Language, useMin: boolean = false): Promise<ItemMetadata[]> {
+    const results: ItemMetadata[] = [];
+    const dotMin = useMin ? ".min" : "";
+    const url = `${cdn}/data/${lang}/items${dotMin}.json`;
+    const resp = await this.axios.get<ItemSchema[]>(url);
+    if (resp.status !== 200) {
+      console.error(`获取物品数据（${url}）发生错误，状态码：${resp.status} (${resp.statusText})`);
+      return results;
+    }
+
+    const serverIndex = ServerIndexes[server];
+    for (const schema of resp.data) {
+      const id = schema.Id;
+      const released = schema.IsReleased[serverIndex];
+      if (!released) {
+        console.debug(`物品${id}尚未实装`);
+        continue;
+      }
+
+      const metadata = {
+        id: id,
+        category: schema.Category,
+        rarity: schema.Rarity,
+        quality: schema.Quality,
+        icon: schema.Icon,
+        name: schema.Name,
+        description: schema.Desc,
+      } as ItemMetadata;
+
+      results.push(metadata);
+    }
+
+    return results;
+  }
+  // endregion
 }

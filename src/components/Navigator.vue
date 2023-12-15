@@ -36,7 +36,7 @@ const links = [
   </div>
 </template>
 
-<style scoped>
+<style scoped lang="scss">
 .navigator {
   display: flex;
   flex-direction: row;
