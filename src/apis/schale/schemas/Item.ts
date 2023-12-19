@@ -1,3 +1,4 @@
+// https://transform.tools/json-to-typescript
 export default interface Item {
   Id: number
   IsReleased: boolean[]

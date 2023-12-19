@@ -19,6 +19,7 @@ const settings = useSettingsStore();
 const {cdn} = storeToRefs(settings);
 
 const metadataStore = useMetadataStore();
+const metadata = computed(() => metadataStore.getItemById(props.itemId));
 
 const itemIconSize = {
   width: 146,
@@ -26,9 +27,8 @@ const itemIconSize = {
 };
 
 const iconURL = computed(() => {
-  const metadata = metadataStore.getItemById(props.itemId);
-  if (metadata == undefined) return undefined;
-  const fileName = metadata.icon;
+  if (metadata.value == undefined) return undefined;
+  const fileName = metadata.value.icon;
   return `${cdn.value}/images/items/icon/${fileName}.webp`;
 });
 
@@ -39,6 +39,26 @@ const xAmount = computed<string|undefined>(() => {
   if (props.amount == undefined) return undefined;
   if (props.amount <= 0) return undefined;
   return `x${props.amount}`;
+});
+
+const rareColor = computed(() => {
+  if (metadata.value == undefined) return undefined;
+  let color: string | undefined = undefined;
+  switch (metadata.value.rarity) {
+    case 'N':
+      color = "#DBE5EE";
+      break;
+    case 'R':
+      color = "#B8DAFD";
+      break;
+    case 'SR':
+      color = "#F7D17E";
+      break;
+    case 'SSR':
+      color = "#DF99FC";
+      break;
+  }
+  return color;
 });
 </script>
 
@@ -64,8 +84,28 @@ $width: v-bind("`${width}px`");
 $height: v-bind("`${height}px`");
 
 .item-icon {
-  .background {}
-  .icon {}
-  .amount {}
+  position: relative;
+  width: $width;
+  height: $height;
+  margin: 4px;
+
+  .background {
+    position: absolute;
+    width: $width;
+    height: $height;
+    background-color: v-bind(rareColor);
+    transform: skew(-10deg);
+    border: 1px solid white;
+    border-radius: 10px;
+  }
+
+  .icon {
+    position: absolute;
+  }
+  .amount {
+    position: absolute;
+    right: 15px;
+    bottom: 5px;
+  }
 }
 </style>

@@ -1,6 +1,6 @@
 import {defineStore} from 'pinia';
 import StudentFilter from '@domains/StudentFilter';
-import {School, CombatClass, Role, Position, AttackType, ArmorType} from '@domains/metadata/Student.ts';
+import {School, CombatClass, Role, Position, AttackType, ArmorType} from '@domains/metadata/Student';
 
 type State = StudentFilter;
 
