@@ -14,7 +14,7 @@ onMounted(() => {
 <template>
   <div class="test">
     <student-filter />
-    <student-list :width="960" :height="800" />
+    <student-list :width="860" :height="800" />
   </div>
 </template>
 

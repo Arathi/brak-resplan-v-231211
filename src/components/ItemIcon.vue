@@ -82,30 +82,38 @@ const rareColor = computed(() => {
 <style scoped lang="scss">
 $width: v-bind("`${width}px`");
 $height: v-bind("`${height}px`");
+$bgColorTopLeft: v-bind(rareColor);
+$bgColorBottomRight: #ffffff;
 
 .item-icon {
   position: relative;
   width: $width;
   height: $height;
-  margin: 4px;
+  margin: 8px;
 
   .background {
     position: absolute;
     width: $width;
     height: $height;
-    background-color: v-bind(rareColor);
+    background: linear-gradient(to bottom, $bgColorTopLeft, $bgColorBottomRight);
     transform: skew(-10deg);
-    border: 1px solid white;
-    border-radius: 10px;
+    border: 2px solid white;
+    border-radius: 12px;
+    box-shadow: 2px 2px 5px gray;
   }
 
   .icon {
     position: absolute;
   }
+
   .amount {
     position: absolute;
     right: 15px;
-    bottom: 5px;
+    bottom: 2px;
+    font-size: 1.5em;
+    font-weight: bold;
+    font-style: italic;
+    -webkit-text-stroke: 1px white;
   }
 }
 </style>

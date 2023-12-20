@@ -38,7 +38,10 @@ const notOwned = computed<number[]>(() => {
         <student-icon :id="id" />
       </template>
     </div>
-    <div class="spliter">未持有</div>
+    <div class="spliter">
+      <div class="background"></div>
+      <div class="text">未持有</div>
+    </div>
     <div class="students not-owned">
       <template v-for="id in notOwned" :key="id">
         <student-icon :id="id" />
@@ -65,18 +68,34 @@ const notOwned = computed<number[]>(() => {
   }
 
   .spliter {
+    position: relative;
+
     display: flex;
     flex-direction: row;
     justify-content: center;
     align-items: center;
 
-    clip-path: inset(0 round 3px);
-
-    background-color: #2C4C72;
-    color: white;
-    font-weight: bold;
+    width: 100%;
+    height: 32px;
 
     margin: 8px 0;
+
+    .background {
+      position: absolute;
+      width: 100%;
+      height: 32px;
+      background-color: #2C4C72;
+      transform: skew(-10deg);
+      border-radius: 8px;
+      z-index: 0;
+    }
+
+    .text {
+      position: absolute;
+      color: white;
+      font-weight: bold;
+      z-index: 1;
+    }
   }
 }
 </style>
